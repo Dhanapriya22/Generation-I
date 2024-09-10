@@ -1,0 +1,9 @@
+.issued {
+    background-color: #f8d7da; /* Light red */
+}
+.renewed {
+    background-color: #fff3cd; /* Light yellow */
+}
+.available {
+    background-color: #d4edda; /* Light green */
+}
