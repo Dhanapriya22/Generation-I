@@ -1,0 +1,40 @@
+[{
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "year": 1960,
+    "genre": "Fiction",
+    "ISBN": "978-0-06-112008-4",
+    "status": "issued"
+},
+{
+    "title": "1984",
+    "author": "George Orwell",
+    "year": 1949,
+    "genre": "Dystopian",
+    "ISBN": "978-0-452-28423-4",
+    "status": "renewed"
+},
+{
+    "title": "Moby Dick",
+    "author": "Herman Melville",
+    "year": 1851,
+    "genre": "Adventure",
+    "ISBN": "978-0-14-243724-7",
+    "status": "available"
+},
+{
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "year": 1925,
+    "genre": "Classic",
+    "ISBN": "978-0-7432-7356-5",
+    "status": "issued"
+},
+{
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "year": 1813,
+    "genre": "Romance",
+    "ISBN": "978-0-19-280238-5",
+    "status": "available"
+}]
