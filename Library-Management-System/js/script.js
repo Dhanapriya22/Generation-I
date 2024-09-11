@@ -38,5 +38,52 @@ fetch("./../js/data.json")
         `;
     
         bookData.appendChild(row);
+
     });
 })
+
+// Form Validation
+document.addEventListener('DOMContentLoaded', function() {
+    const openFormBtn = document.getElementById('openFormBtn');
+    const closeFormBtn = document.getElementById('closeFormBtn');
+    const formPopup = document.getElementById('formPopup');
+    const myForm = document.getElementById('myForm');
+
+    openFormBtn.addEventListener('click', function() {
+        formPopup.style.display = 'block';
+    });
+
+    closeFormBtn.addEventListener('click', function() {
+        formPopup.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === formPopup) {
+            formPopup.style.display = 'none';
+        }
+    });
+
+    // Create an empty JSON object
+    let jsonObject = {};
+
+    submitForm = () => {
+
+        // Get form element
+        const form = document.getElementById('myForm');
+            
+        // Create a FormData object from the form
+        const formData = new FormData(form);
+        
+        // Convert FormData to a JSON object
+        formData.forEach((value, key) => {
+            jsonObject[key] = value;
+        });
+                
+        // Optionally, you can clear the form fields after submission
+        form.reset();
+    }
+
+    console.log(jsonObject);
+});
+
+

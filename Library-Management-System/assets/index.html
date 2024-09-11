@@ -9,6 +9,8 @@
 
 <body>
     <h1>Book List</h1>
+    <button id="openFormBtn">Add Fields</button>
+
     <table border="1" cellpadding="10">
         <thead>
             <tr>
@@ -25,6 +27,55 @@
         </tbody>
     </table>
 
-    <script src="../js/script.js"></script>
+    <!-- Popup Form -->
+    <div id="formPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" id="closeFormBtn">&times;</span>
+            <h2>Add New Book</h2>
+            <form id="myForm">
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input type="text" id="title" name="title" required>
+                    <div class="error" id="titleError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="author">Author:</label>
+                    <input type="text" id="author" name="author" required>
+                    <div class="error" id="authorError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="year">Year:</label>
+                    <input type="number" id="year" name="year" required>
+                    <div class="error" id="yearError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="genre">Genre:</label>
+                    <input type="text" id="genre" name="genre" required>
+                    <div class="error" id="genreError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ISBN">ISBN:</label>
+                    <input type="text" id="ISBN" name="ISBN" required>
+                    <div class="error" id="ISBNError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <input type="text" id="status" name="status" required>
+                    <div class="error" id="statusError"></div>
+                </div>
+
+                <!-- <button type="submit">Submit</button> -->
+                <button type="submit" onclick="submitForm()">Submit</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="../js/script.js"></script> 
 </body>
 </html>
