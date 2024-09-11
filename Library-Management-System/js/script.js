@@ -42,48 +42,84 @@ fetch("./../js/data.json")
     });
 })
 
-// Form Validation
-document.addEventListener('DOMContentLoaded', function() {
-    const openFormBtn = document.getElementById('openFormBtn');
-    const closeFormBtn = document.getElementById('closeFormBtn');
-    const formPopup = document.getElementById('formPopup');
-    const myForm = document.getElementById('myForm');
 
-    openFormBtn.addEventListener('click', function() {
-        formPopup.style.display = 'block';
+// // Form Validation
+// document.addEventListener('DOMContentLoaded', function() {
+//     const openFormBtn = document.getElementById('openFormBtn');
+//     const closeFormBtn = document.getElementById('closeFormBtn');
+//     const formPopup = document.getElementById('formPopup');
+//     const myForm = document.getElementById('myForm');    
+
+//     openFormBtn.addEventListener('click', function() {
+//         formPopup.style.display = 'block';
+//     });
+
+//     closeFormBtn.addEventListener('click', function() {
+//         formPopup.style.display = 'none';
+//     });
+
+// });
+
+
+// DOM Elements
+const booksForm = document.getElementById("booksForm");
+const tableContainer = document.querySelector("#bookData");
+const titleInput = booksForm["title"];
+const authorInput = booksForm["author"];
+const yearInput = booksForm["year"];
+const genreInput = booksForm["genre"];
+const ISBNInput = booksForm["ISBN"];
+const statusInput = booksForm["status"];
+
+const newBookList = JSON.parse(localStorage.getItem("newBookList")) || [];;
+
+const addNewBook = (title, author, year, genre, ISBN, status) => {
+    newBookList.push({
+        title, author, year, genre, ISBN, status
     });
 
-    closeFormBtn.addEventListener('click', function() {
-        formPopup.style.display = 'none';
-    });
+    localStorage.setItem('newBookList', JSON.stringify(newBookList));
 
-    window.addEventListener('click', function(event) {
-        if (event.target === formPopup) {
-            formPopup.style.display = 'none';
-        }
-    });
+    return{title, author, year, genre, ISBN, status};
+};
 
-    // Create an empty JSON object
-    let jsonObject = {};
+let listAdd = document.getElementById('listAdd');
 
-    submitForm = () => {
+const createBookList = ({title, author, year, genre, ISBN, status}) => {
+    let row = document.createElement('tr');
 
-        // Get form element
-        const form = document.getElementById('myForm');
-            
-        // Create a FormData object from the form
-        const formData = new FormData(form);
-        
-        // Convert FormData to a JSON object
-        formData.forEach((value, key) => {
-            jsonObject[key] = value;
-        });
-                
-        // Optionally, you can clear the form fields after submission
-        form.reset();
-    }
+    row.innerHTML = `
+        <td>${title}</td>
+        <td>${author}</td>
+        <td>${year}</td>
+        <td>${genre}</td>
+        <td>${ISBN}</td>
+        <td>${status}</td>
+    `;
 
-    console.log(jsonObject);
-});
+    listAdd.appendChild(row);
+}
 
+newBookList.forEach(createBookList);
 
+booksForm.onsubmit = (e) => {
+    e.preventDefault();
+
+    const newReadyList = addNewBook(
+        titleInput.value,
+        authorInput.value,
+        yearInput.value,
+        genreInput.value,
+        ISBNInput.value,
+        statusInput.value
+    );
+
+    createBookList(newReadyList);
+
+    titleInput.value = "";
+    authorInput.value = "";
+    yearInput.value = "";
+    genreInput.value = "";
+    ISBNInput.value = "";
+    statusInput.value = "";
+};

@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book List</title>
     <link rel="stylesheet" type="text/css" href="../css/style.css">
+
 </head>
 
 <body>
     <h1>Book List</h1>
-    <button id="openFormBtn">Add Fields</button>
-
     <table border="1" cellpadding="10">
         <thead>
             <tr>
@@ -27,55 +26,37 @@
         </tbody>
     </table>
 
-    <!-- Popup Form -->
-    <div id="formPopup" class="popup">
-        <div class="popup-content">
-            <span class="close-btn" id="closeFormBtn">&times;</span>
-            <h2>Add New Book</h2>
-            <form id="myForm">
-                <div class="form-group">
-                    <label for="title">Title:</label>
-                    <input type="text" id="title" name="title" required>
-                    <div class="error" id="titleError"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="author">Author:</label>
-                    <input type="text" id="author" name="author" required>
-                    <div class="error" id="authorError"></div>
-                </div>
+    <form id="booksForm" style="margin-top:10px; margin-bottom: 10px;">
+        <input type="text" placeholder="Book Title" name="title" required />
+        <input type="text" placeholder="Author" name="author" required />
+        <input type="text" placeholder="Year" name="year" required />
+        <input type="text" placeholder="Genre" name="genre" required />
+        <input type="text" placeholder="ISBN" name="ISBN" required />
+        <input type="text" placeholder="Status" name="status" required />
+        <button>Add New Book</button>
+    </form>
 
-                <div class="form-group">
-                    <label for="year">Year:</label>
-                    <input type="number" id="year" name="year" required>
-                    <div class="error" id="yearError"></div>
-                </div>
+    <table border="1" cellpadding="10">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Year</th>
+                <th>Genre</th>
+                <th>ISBN</th>
+                <th>Status</th>
+            </tr>
+        </thead>
 
-                <div class="form-group">
-                    <label for="genre">Genre:</label>
-                    <input type="text" id="genre" name="genre" required>
-                    <div class="error" id="genreError"></div>
-                </div>
+        <tbody id="listAdd">
+        </tbody>
+    </table>
 
-                <div class="form-group">
-                    <label for="ISBN">ISBN:</label>
-                    <input type="text" id="ISBN" name="ISBN" required>
-                    <div class="error" id="ISBNError"></div>
-                </div>
+    <script src="../js/script.js"></script>
 
-                <div class="form-group">
-                    <label for="status">Status:</label>
-                    <input type="text" id="status" name="status" required>
-                    <div class="error" id="statusError"></div>
-                </div>
-
-                <!-- <button type="submit">Submit</button> -->
-                <button type="submit" onclick="submitForm()">Submit</button>
-            </form>
-        </div>
-    </div>
-
-
-    <script src="../js/script.js"></script> 
+    <script>
+        
+        
+    </script>
 </body>
 </html>
