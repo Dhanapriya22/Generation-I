@@ -85,8 +85,9 @@ const addNewBook = (title, author, year, genre, ISBN, status) => {
 
 let listAdd = document.getElementById('listAdd');
 
+let row = document.createElement('tr');
+
 const createBookList = ({title, author, year, genre, ISBN, status}) => {
-    let row = document.createElement('tr');
 
     row.innerHTML = `
         <td>${title}</td>
@@ -95,16 +96,26 @@ const createBookList = ({title, author, year, genre, ISBN, status}) => {
         <td>${genre}</td>
         <td>${ISBN}</td>
         <td>${status}</td>
+        <td>
+            <button onclick="editRow(this)">Edit</button>
+            <button onclick="deleteRow(this)">Delete</button>
+        </td>
     `;
 
     listAdd.appendChild(row);
 }
 
+let editingBookList = null;
+
+// Create Book List
 newBookList.forEach(createBookList);
 
 booksForm.onsubmit = (e) => {
     e.preventDefault();
 
+    if(editingBookList) {
+        console.log(e);
+    }
     const newReadyList = addNewBook(
         titleInput.value,
         authorInput.value,
@@ -123,3 +134,20 @@ booksForm.onsubmit = (e) => {
     ISBNInput.value = "";
     statusInput.value = "";
 };
+
+// Edit Table
+editRow = (e) => {
+    console.log(e);
+    editingBookList = e.parentElement.parentElement;
+    titleInput.value = editingBookList.cells[0].textContent;
+    authorInput.value = editingBookList.cells[1].textContent;
+    yearInput.value = editingBookList.cells[2].textContent;
+    genreInput.value = editingBookList.cells[3].textContent;
+    ISBNInput.value = editingBookList.cells[4].textContent;
+    statusInput.value = editingBookList.cells[5].textContent;
+}
+deleteRow = (e) => {
+    console.log("Delete clicked", e);
+    listAdd.removeChild(row);
+}
+
