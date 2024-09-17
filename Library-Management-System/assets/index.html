@@ -6,6 +6,7 @@
     <title>Book List</title>
     <link rel="stylesheet" type="text/css" href="../css/style.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -27,6 +28,7 @@
     </table>
 
     <form id="booksForm" style="margin-top:10px; margin-bottom: 10px;">
+        <input type="text" placeholder="Date" name="date" required />
         <input type="text" placeholder="Book Title" name="title" required />
         <input type="text" placeholder="Author" name="author" required />
         <input type="text" placeholder="Year" name="year" required />
@@ -39,6 +41,7 @@
     <table border="1" cellpadding="10">
         <thead>
             <tr>
+                <th>Date</th>
                 <th>Title</th>
                 <th>Author</th>
                 <th>Year</th>
@@ -51,13 +54,12 @@
 
         <tbody id="listAdd">
         </tbody>
+        <!-- Chart -->
+        <canvas id="myChartDisp" width="400" height="200"></canvas>
     </table>
 
     <script src="../js/script.js"></script>
 
-    <script>
-        
-        
-    </script>
+    <script></script>
 </body>
 </html>
