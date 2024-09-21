@@ -1,182 +1,142 @@
-fetch("./../js/data.json")
+let bookList = JSON.parse(localStorage.getItem("bookList")) || [{
+    date: '22-09-2023',
+    title: 'Moby Dick',
+    author: 'Harper Lee',
+    year: '1859',
+    genre: 'Comedy',
+    status: 'Available'
+},
+{
+    date: '23-09-2023',
+    title: 'The Great Gatsby',
+    author: 'George Orwell',
+    year: '1990',
+    genre: 'Classic',
+    status: 'Issued'
+}];
 
-.then(function(response) {
-    return response.json();
-})
+// Form Open and Close
+function openForm() {
+    document.getElementById("booksForm").style.display = "block";
+}
 
-.then(function(data){
+function closeForm() {
+    document.getElementById("booksForm").style.display = "none";
+}
 
-    const tableBody = document.getElementById('bookData');
+bookList.forEach((books, index) => {
+    let bookDisplay = document.getElementById('dataList');
+    let row = document.createElement('tr');
+    let statusClass = '';
 
-    data.forEach(book => {
-        let row = document.createElement('tr');
-        let statusClass = '';
-    
-        // Determine the class for status
-        switch (book.status) {
-            case 'issued':
-                statusClass = 'issued';
-                break;
-            case 'renewed':
-                statusClass = 'renewed';
-                break;
-            case 'available':
-                statusClass = 'available';
-                break;
-            default:
-                statusClass = '';
-        }
-    
-        // Create cells and add to the row
-        row.innerHTML = `
-            <td>${book.title}</td>
-            <td>${book.author}</td>
-            <td>${book.year}</td>
-            <td>${book.genre}</td>
-            <td>${book.ISBN}</td>
-            <td class="${statusClass}">${book.status}</td>
-        `;
-    
-        bookData.appendChild(row);
+    // Determine the class for status
+    switch (books.status) {
+        case 'Issued':
+            statusClass = 'issued';
+            break;
+        case 'Renewed':
+            statusClass = 'renewed';
+            break;
+        case 'Available':
+            statusClass = 'available';
+            break;
+        default:
+            statusClass = '';
+    }
 
-    });
-})
-
-
-// // Form Validation
-// document.addEventListener('DOMContentLoaded', function() {
-//     const openFormBtn = document.getElementById('openFormBtn');
-//     const closeFormBtn = document.getElementById('closeFormBtn');
-//     const formPopup = document.getElementById('formPopup');
-//     const myForm = document.getElementById('myForm');    
-
-//     openFormBtn.addEventListener('click', function() {
-//         formPopup.style.display = 'block';
-//     });
-
-//     closeFormBtn.addEventListener('click', function() {
-//         formPopup.style.display = 'none';
-//     });
-
-// });
-
-
-// DOM Elements
-const booksForm = document.getElementById("booksForm");
-const tableContainer = document.querySelector("#bookData");
-const dateInput = booksForm["date"];
-const titleInput = booksForm["title"];
-const authorInput = booksForm["author"];
-const yearInput = booksForm["year"];
-const genreInput = booksForm["genre"];
-const ISBNInput = booksForm["ISBN"];
-const statusInput = booksForm["status"];
-
-const newBookList = JSON.parse(localStorage.getItem("newBookList")) || [];
-
-const addNewBook = (date, title, author, year, genre, ISBN, status) => {
-    newBookList.push({
-        date, title, author, year, genre, ISBN, status
-    });
-
-    localStorage.setItem('newBookList', JSON.stringify(newBookList));
-
-    return{date, title, author, year, genre, ISBN, status};
-};
-
-let listAdd = document.getElementById('listAdd');
-
-let row = document.createElement('tr');
-
-const createBookList = ({date, title, author, year, genre, ISBN, status}) => {
-
+    console.log(books)
     row.innerHTML = `
-        <td>${date}</td>
-        <td>${title}</td>
-        <td>${author}</td>
-        <td>${year}</td>
-        <td>${genre}</td>
-        <td>${ISBN}</td>
-        <td>${status}</td>
+        <td>${books.date}</td>
+        <td>${books.title}</td>
+        <td>${books.author}</td>
+        <td>${books.year}</td>
+        <td>${books.genre}</td>
+        <td class="${statusClass}">${books.status}</td>
         <td>
-            <button onclick="editRow(this)">Edit</button>
-            <button onclick="deleteRow(this)">Delete</button>
+            <button onclick="editBook(${index})">Edit</button>
+            <button onclick="deleteBook(${index})">Delete</button>
         </td>
-    `;
+    `
+    bookDisplay.appendChild(row);
 
-    listAdd.appendChild(row);
-}
+    // Chart Display
+    // const ctx = document.getElementById('myChartDisp').getContext('2d');
+    // const myChart = new Chart(ctx, {
+    //     type: 'bar', // Specify the chart type
+    //     data: {
+    //         labels: books.title,
+    //         datasets: [{
+    //             label: 'Sales',
+    //             data: [65, 59, 80, 81, 56, 55, 40], // Data for the chart
+    //             backgroundColor: 'rgba(75, 192, 192, 0.2)', // Background color of bars
+    //             borderColor: 'rgba(75, 192, 192, 1)', // Border color of bars
+    //             borderWidth: 1
+    //         }]
+    //     },
+    //     options: {
+    //         scales: {
+    //             y: {
+    //                 beginAtZero: true // Start the y-axis at 0
+    //             }
+    //         }
+    //     }
+    // });
+});
 
-let editingBookList = null;
+// Add or Update data
+const saveBook = (event) => {
+    event.preventDefault();
+    const date = document.getElementById('date').value;
+    const title = document.getElementById('title').value;
+    const author = document.getElementById('author').value;
+    const year = document.getElementById('year').value;
+    const genre = document.getElementById('genre').value;
+    const status = document.getElementById('status').value;
+    const index = document.getElementById('index').value;                
+    
+    if (index) {
+        bookList[index] = { date, title, author, year, genre, status }; // Update existing data
+    } else {
+        bookList.push({ date, title, author, year, genre, status }); // Add new data
+    }
 
-// Create Book List
-newBookList.forEach(createBookList);
-
-booksForm.onsubmit = (e) => {
-    e.preventDefault();
-
-    if(editingBookList) {
-        console.log(e);
-    } 
-    const newReadyList = addNewBook(
-        dateInput.value,
-        titleInput.value,
-        authorInput.value,
-        yearInput.value,
-        genreInput.value,
-        ISBNInput.value,
-        statusInput.value
-    );    
-
-    createBookList(newReadyList);
-    dateInput.value =   
-    titleInput.value = "";
-    authorInput.value = "";
-    yearInput.value = "";
-    genreInput.value = "";
-    ISBNInput.value = "";
-    statusInput.value = "";
+    localStorage.setItem('bookList', JSON.stringify(bookList));
+    clearForm();
+    location.reload();
 };
 
-// Edit Table
-editRow = (e) => {
-    console.log(e);
-    editingBookList = e.parentElement.parentElement;
-    dateInput.value = editingBookList.cells[0].textContent;
-    titleInput.value = editingBookList.cells[1].textContent;
-    authorInput.value = editingBookList.cells[2].textContent;
-    yearInput.value = editingBookList.cells[3].textContent;
-    genreInput.value = editingBookList.cells[4].textContent;
-    ISBNInput.value = editingBookList.cells[5].textContent;
-    statusInput.value = editingBookList.cells[6].textContent;
-}
-deleteRow = (e) => {
-    console.log("Delete clicked", e);
-    listAdd.removeChild(row);
-}
+
+// Edit data
+const editBook = (index) => {
+    console.log(index);
+    openForm();
+    const bookList = JSON.parse(localStorage.getItem('bookList')) || [];
+    const item = bookList[index];
+    console.log(item)
+    document.getElementById('date').value = item.date;
+    document.getElementById('title').value = item.title;
+    document.getElementById('author').value = item.author;
+    document.getElementById('year').value = item.year;
+    document.getElementById('genre').value = item.genre;
+    document.getElementById('status').value = item.status;
+    document.getElementById('index').value = index;
+};
+
+// Delete data
+const deleteBook = (index) => {
+    console.log(index);
+    const bookList = JSON.parse(localStorage.getItem('bookList')) || [];
+    bookList.splice(index, 1);
+    localStorage.setItem('bookList', JSON.stringify(bookList));
+    location.reload();
+};
 
 
-newBookList.forEach((listItems) => {
-    console.log(listItems);
-    const ctx = document.getElementById('myChartDisp').getContext('2d');
-    const myChartDisp = new Chart(ctx, {
-        type: 'bar', // Can be 'line', 'bar', 'pie', etc.
-        data: {
-            labels: listItems.title,
-            datasets: [{
-                label: 'Date',
-                data: listItems.title,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-})
+// Event listeners
+document.getElementById('booksForm').addEventListener('submit', saveBook);
+
+// Clear the form
+const clearForm = () => {
+    document.getElementById('booksForm').reset();
+    document.getElementById('index').value = '';
+};
