@@ -60,27 +60,42 @@ bookList.forEach((books, index) => {
     bookDisplay.appendChild(row);
 
     // Chart Display
-    // const ctx = document.getElementById('myChartDisp').getContext('2d');
-    // const myChart = new Chart(ctx, {
-    //     type: 'bar', // Specify the chart type
-    //     data: {
-    //         labels: books.title,
-    //         datasets: [{
-    //             label: 'Sales',
-    //             data: [65, 59, 80, 81, 56, 55, 40], // Data for the chart
-    //             backgroundColor: 'rgba(75, 192, 192, 0.2)', // Background color of bars
-    //             borderColor: 'rgba(75, 192, 192, 1)', // Border color of bars
-    //             borderWidth: 1
-    //         }]
-    //     },
-    //     options: {
-    //         scales: {
-    //             y: {
-    //                 beginAtZero: true // Start the y-axis at 0
-    //             }
-    //         }
-    //     }
-    // });
+    // Count the number of books by status
+    const statusCount = bookList.reduce((acc, book) => {
+        acc[book.status] = (acc[book.status] || 0) + 1;
+        return acc;
+    }, {});
+
+    console.log(statusCount)
+
+    const statuses = Object.keys(statusCount);
+    const counts = Object.values(statusCount);
+    console.log(statuses)
+    console.log(counts)
+
+    // Chart Display
+    const ctx = document.getElementById('myChartDisp').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar', // Specify the chart type
+        data: {
+            labels: statuses,
+            datasets: [{
+                label: 'Number of Books',
+                data: counts, // Data for the chart
+                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Background color of bars
+                borderColor: 'rgba(75, 192, 192, 1)', // Border color of bars
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true // Start the y-axis at 0
+                }
+            }
+        }
+    });
+
 });
 
 // Add or Update data
@@ -92,7 +107,7 @@ const saveBook = (event) => {
     const year = document.getElementById('year').value;
     const genre = document.getElementById('genre').value;
     const status = document.getElementById('status').value;
-    const index = document.getElementById('index').value;                
+    const index = document.getElementById('index').value;
     
     if (index) {
         bookList[index] = { date, title, author, year, genre, status }; // Update existing data
