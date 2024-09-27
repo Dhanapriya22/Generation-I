@@ -81,7 +81,7 @@ const saveBook = (event) => {
     localStorage.setItem('bookList', JSON.stringify(bookList));
     clearForm();
     updateChart();
-    // location.reload();
+    location.reload();
     
 };
 
@@ -108,7 +108,7 @@ const deleteBook = (index) => {
     bookList.splice(index, 1);
     localStorage.setItem('bookList', JSON.stringify(bookList));
     updateChart();
-    // location.reload();
+    location.reload();
 };
 
 
@@ -172,3 +172,4 @@ function updateChart() {
 
 // Initialize chart on page load
 initializeChart();
+updateChart();
