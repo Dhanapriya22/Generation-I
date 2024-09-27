@@ -1,5 +1,5 @@
 let bookList = JSON.parse(localStorage.getItem("bookList")) || [{
-    date: '22-09-2023',
+    date: '2023-09-23',
     title: 'Moby Dick',
     author: 'Harper Lee',
     year: '1859',
@@ -58,45 +58,8 @@ bookList.forEach((books, index) => {
         </td>
     `
     bookDisplay.appendChild(row);
-
-    // Chart Display
-    // Count the number of books by status
-    const statusCount = bookList.reduce((acc, book) => {
-        acc[book.status] = (acc[book.status] || 0) + 1;
-        return acc;
-    }, {});
-
-    console.log(statusCount)
-
-    const statuses = Object.keys(statusCount);
-    const counts = Object.values(statusCount);
-    console.log(statuses)
-    console.log(counts)
-
-    // Chart Display
-    const ctx = document.getElementById('myChartDisp').getContext('2d');
-    const myChart = new Chart(ctx, {
-        type: 'bar', // Specify the chart type
-        data: {
-            labels: statuses,
-            datasets: [{
-                label: 'Number of Books',
-                data: counts, // Data for the chart
-                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Background color of bars
-                borderColor: 'rgba(75, 192, 192, 1)', // Border color of bars
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true // Start the y-axis at 0
-                }
-            }
-        }
-    });
-
 });
+
 
 // Add or Update data
 const saveBook = (event) => {
@@ -117,7 +80,9 @@ const saveBook = (event) => {
 
     localStorage.setItem('bookList', JSON.stringify(bookList));
     clearForm();
-    location.reload();
+    updateChart();
+    // location.reload();
+    
 };
 
 
@@ -139,11 +104,11 @@ const editBook = (index) => {
 
 // Delete data
 const deleteBook = (index) => {
-    console.log(index);
     const bookList = JSON.parse(localStorage.getItem('bookList')) || [];
     bookList.splice(index, 1);
     localStorage.setItem('bookList', JSON.stringify(bookList));
-    location.reload();
+    updateChart();
+    // location.reload();
 };
 
 
@@ -155,3 +120,55 @@ const clearForm = () => {
     document.getElementById('booksForm').reset();
     document.getElementById('index').value = '';
 };
+
+
+// Chart Disply
+const ctx = document.getElementById('myChartDisp').getContext('2d');
+let bookChart;
+
+// Initialize the chart
+function initializeChart() {
+    const labels = [];
+    const data = [];
+
+    // Create the chart
+    bookChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Books',
+                data: data,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Update chart data
+function updateChart() {
+    const availableCount = {};
+
+    bookList.forEach(books => {
+        availableCount[books.status] = (availableCount[books.status] || 0) + 1;
+    })
+
+    const labels = Object.keys(availableCount);
+    const data = Object.values(availableCount);
+
+    bookChart.data.labels = labels;
+    bookChart.data.datasets[0].data = data;
+    bookChart.update();
+}
+
+// Initialize chart on page load
+initializeChart();

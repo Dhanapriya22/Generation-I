@@ -1,82 +1,169 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book List</title>
-    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <title>Book List CRUD with Chart.js</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        button {
+            margin-left: 10px;
+        }
+    </style>
 </head>
-
 <body>
-    <h1>Book List</h1>
-    <button id="openFormBtn">Add Fields</button>
+    <h1>Book List CRUD with Chart</h1>
+    <form id="bookForm">
+        <input type="text" id="title" placeholder="Book Title" required>
+        <input type="text" id="author" placeholder="Author" required>
+        <input type="number" id="year" placeholder="Publication Year" required>
+        <button type="submit">Add Book</button>
+    </form>
 
-    <table border="1" cellpadding="10">
+    <canvas id="bookChart" width="400" height="200"></canvas>
+
+    <table id="bookTable">
         <thead>
             <tr>
                 <th>Title</th>
                 <th>Author</th>
                 <th>Year</th>
-                <th>Genre</th>
-                <th>ISBN</th>
-                <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
-
-        <tbody id="bookData">
+        <tbody>
         </tbody>
     </table>
 
-    <!-- Popup Form -->
-    <div id="formPopup" class="popup">
-        <div class="popup-content">
-            <span class="close-btn" id="closeFormBtn">&times;</span>
-            <h2>Add New Book</h2>
-            <form id="myForm">
-                <div class="form-group">
-                    <label for="title">Title:</label>
-                    <input type="text" id="title" name="title" required>
-                    <div class="error" id="titleError"></div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="author">Author:</label>
-                    <input type="text" id="author" name="author" required>
-                    <div class="error" id="authorError"></div>
-                </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const bookForm = document.getElementById('bookForm');
+        const bookTable = document.getElementById('bookTable').getElementsByTagName('tbody')[0];
+        const ctx = document.getElementById('bookChart').getContext('2d');
 
-                <div class="form-group">
-                    <label for="year">Year:</label>
-                    <input type="number" id="year" name="year" required>
-                    <div class="error" id="yearError"></div>
-                </div>
+        let books = [];
+        let editIndex = -1;
+        let bookChart;
 
-                <div class="form-group">
-                    <label for="genre">Genre:</label>
-                    <input type="text" id="genre" name="genre" required>
-                    <div class="error" id="genreError"></div>
-                </div>
+        // Initialize the chart
+        function initializeChart() {
+            console.log("Initialize Chart Function")
+            const labels = [];
+            const data = [];
 
-                <div class="form-group">
-                    <label for="ISBN">ISBN:</label>
-                    <input type="text" id="ISBN" name="ISBN" required>
-                    <div class="error" id="ISBNError"></div>
-                </div>
+            // Create the chart
+            bookChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Books',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
 
-                <div class="form-group">
-                    <label for="status">Status:</label>
-                    <input type="text" id="status" name="status" required>
-                    <div class="error" id="statusError"></div>
-                </div>
+        // Update chart data
+        function updateChart() {
+            console.log("Update Chart Function")
+            const authorCount = {};
 
-                <!-- <button type="submit">Submit</button> -->
-                <button type="submit" onclick="submitForm()">Submit</button>
-            </form>
-        </div>
-    </div>
+            books.forEach(book => {
+                authorCount[book.author] = (authorCount[book.author] || 0) + 1;
+                console.log(authorCount)
+            });
 
+            const labels = Object.keys(authorCount);
+            const data = Object.values(authorCount);
 
-    <script src="../js/script.js"></script> 
+            bookChart.data.labels = labels;
+            bookChart.data.datasets[0].data = data;
+            bookChart.update();
+        }
+
+        // Handle form submission
+        bookForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+            const year = document.getElementById('year').value;
+
+            if (editIndex === -1) {
+                // Create
+                books.push({ title, author, year });
+            } else {
+                // Update
+                books[editIndex] = { title, author, year };
+                editIndex = -1;
+            }
+
+            bookForm.reset();
+            renderTable();
+            updateChart();
+        });
+
+        // Render the book table
+        function renderTable() {
+            bookTable.innerHTML = '';
+            books.forEach((book, index) => {
+                const row = bookTable.insertRow();
+                row.innerHTML = `
+                    <td>${book.title}</td>
+                    <td>${book.author}</td>
+                    <td>${book.year}</td>
+                    <td>
+                        <button onclick="editBook(${index})">Edit</button>
+                        <button onclick="deleteBook(${index})">Delete</button>
+                    </td>
+                `;
+            });
+        }
+
+        // Edit book
+        function editBook(index) {
+            const book = books[index];
+            document.getElementById('title').value = book.title;
+            document.getElementById('author').value = book.author;
+            document.getElementById('year').value = book.year;
+            editIndex = index;
+        }
+
+        // Delete book
+        function deleteBook(index) {
+            books.splice(index, 1);
+            renderTable();
+            updateChart();
+        }
+
+        // Initialize chart on page load
+        initializeChart();
+    </script>
 </body>
 </html>
