@@ -51,16 +51,18 @@
             <tbody id="dataList"></tbody>
         </table>
 
+        <p id="errorDisplay"></p>
+
         <div style="margin-top: 20px;">
             <button class="open-button" onclick="openForm()" style="margin-bottom: 20px;">Add Book</button>
 
             <form id="booksForm">
-                <input type="date" placeholder="Date" id="date" required />
-                <input type="text" placeholder="Title" id="title" required />
-                <input type="text" placeholder="Author" id="author" required />
-                <input type="text" placeholder="Year" id="year" required />
-                <input type="text" placeholder="Genre" id="genre" required />
-                <select name="status" id="status" required>
+                <input type="date" placeholder="Date" id="date" />
+                <input type="text" placeholder="Title" id="title" />
+                <input type="text" placeholder="Author" id="author" />
+                <input type="text" placeholder="Year" id="year" />
+                <input type="text" placeholder="Genre" id="genre" />
+                <select name="status" id="status">
                     <option value="">Select</option>
                     <option value="Available">Available</option>
                     <option value="Renewed">Renewed</option>
@@ -70,7 +72,9 @@
                 <button type="submit" class="btn">Save</button>
                 <button type="button" class="btn" onclick="closeForm()">Close</button>
             </form>
-        </div>
+
+            
+        </div>        
 
         <!-- Chart -->
         <canvas id="myChartDisp" width="500" height="200"></canvas>

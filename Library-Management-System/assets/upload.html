@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Data Upload</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Your CSS file -->
+</head>
+<body>
+    <h1>Upload Excel File</h1>
+    <input type="file" id="fileInput" accept=".xlsx" />
+    <button id="submitBtn">Submit</button>
+    
+    <div id="tabs"></div>
+    <div id="tableContainer"></div>
+    
+    <button id="exportBtn" style="display:none;">Export</button>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let workbook;
+        let currentSheetName;
+
+        $('#submitBtn').on('click', function() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file || !file.name.endsWith('.xlsx')) {
+                alert('Please upload a valid Excel file.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                workbook = XLSX.read(data, {type: 'array'});
+                loadTabs();
+                loadSheet(workbook.SheetNames[0]);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        function loadTabs() {
+            const tabsContainer = $('#tabs');
+            tabsContainer.empty();
+            
+            workbook.SheetNames.forEach((sheetName, index) => {
+                if (workbook.Sheets[sheetName]) {
+                    const tab = $('<button>').text(sheetName).on('click', function() {
+                        loadSheet(sheetName);
+                    });
+                    tabsContainer.append(tab);
+                }
+            });
+        }
+
+        function loadSheet(sheetName) {
+            currentSheetName = sheetName;
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+            
+            displayTable(jsonData);
+        }
+
+        function displayTable(data) {
+            const tableContainer = $('#tableContainer');
+            tableContainer.empty();
+
+            const table = $('<table border="1"></table>');
+            
+            data.forEach((row, rowIndex) => {
+                const tr = $('<tr></tr>');
+                row.forEach((cell, cellIndex) => {
+                    const td = $('<td></td>').append(
+                        $('<input>').val(cell).on('input', function() {
+                            data[rowIndex][cellIndex] = $(this).val();
+                        })
+                    );
+                    tr.append(td);
+                });
+                table.append(tr);
+            });
+
+            tableContainer.append(table);
+            $('#exportBtn').show();
+        }
+
+        $('#exportBtn').on('click', function() {
+            const newSheet = XLSX.utils.aoa_to_sheet(data);
+            const newWorkbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(newWorkbook, newSheet, currentSheetName);
+            XLSX.writeFile(newWorkbook, `${currentSheetName}.xlsx`);
+        });
+
+    </script> <!-- Your JavaScript file -->
+</body>
+</html>

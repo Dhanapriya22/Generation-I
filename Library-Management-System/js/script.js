@@ -71,7 +71,7 @@ const saveBook = (event) => {
     const genre = document.getElementById('genre').value;
     const status = document.getElementById('status').value;
     const index = document.getElementById('index').value;
-    
+
     if (index) {
         bookList[index] = { date, title, author, year, genre, status }; // Update existing data
     } else {
@@ -169,6 +169,8 @@ function updateChart() {
     bookChart.data.datasets[0].data = data;
     bookChart.update();
 }
+
+
 
 // Initialize chart on page load
 initializeChart();

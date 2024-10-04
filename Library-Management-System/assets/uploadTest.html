@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Reader</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+<body>
+    <h1>Excel Upload and Viewer</h1>
+    
+    <input type="file" id="file-input" accept=".xlsx, .xls" />
+    <button id="upload-button">Upload</button>
+    
+    <div id="tabs"></div>
+    <div id="table-container"></div>
+    
+    <button id="export-button">Export to Excel</button>
+
+    <script>
+        // script.js
+        document.getElementById('upload-button').addEventListener('click', handleFileUpload);
+        document.getElementById('export-button').addEventListener('click', exportToExcel);
+
+        let sheetsData = {};
+        let activeSheet = '';
+
+        function handleFileUpload() {            
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+
+            console.log(file)
+            
+            if (!file) {
+                alert('Please upload an Excel file.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                console.log(workbook)
+                sheetsData = {};
+
+                // Create tabs for each sheet
+                const tabs = document.getElementById('tabs');
+                tabs.innerHTML = '';
+                
+                Object.keys(workbook.Sheets).forEach(sheetName => {
+                    const sheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    console.log(XLSX.utils.sheet_to_json())
+                    sheetsData[sheetName] = jsonData;
+
+                    const tab = document.createElement('button');
+                    tab.textContent = sheetName;
+                    tab.onclick = () => loadSheet(sheetName);
+                    tabs.appendChild(tab);
+                });
+
+                // Load the first sheet by default
+                if (Object.keys(sheetsData).length > 0) {
+                    activeSheet = Object.keys(sheetsData)[0];
+                    loadSheet(activeSheet);
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        function loadSheet(sheetName) {
+            activeSheet = sheetName;
+            const tableContainer = document.getElementById('table-container');
+            tableContainer.innerHTML = '';
+
+            const data = sheetsData[sheetName];
+            if (!data || data.length === 0) return;
+
+            const table = document.createElement('table');
+            
+            data.forEach((row, rowIndex) => {
+                const tr = document.createElement('tr');
+                
+                row.forEach((cell, cellIndex) => {
+                    const td = document.createElement('td');
+                    const input = document.createElement('input');
+                    console.log(input)
+                    console.log(input.value)
+                    input.value = cell || '';
+                    input.setAttribute('data-row', rowIndex);
+                    input.setAttribute('data-col', cellIndex);
+                    td.appendChild(input);
+                    tr.appendChild(td);
+                    input.addEventListener("change", updateValue);
+
+                    function updateValue(e) {
+                        console.log(e)
+                        let getValues = e.target.value;
+                        input.value = getValues
+                    }
+                });
+                
+                table.appendChild(tr);
+            });
+
+            tableContainer.appendChild(table);
+        }
+
+        function exportToExcel() {
+            const workbook = XLSX.utils.book_new();
+            
+            Object.keys(sheetsData).forEach(sheetName => {
+                const data = sheetsData[sheetName];
+                const worksheet = XLSX.utils.aoa_to_sheet(data);
+                XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+            });
+
+            XLSX.writeFile(workbook, 'exported_data.xlsx');
+        }
+
+    </script>
+</body>
+</html>

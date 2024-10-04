@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Upload and Edit</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+<input type="file" id="fileInput" />
+<button id="downloadBtn" style="display:none;">Download</button>
+<table id="dataTable" style="display:none;"></table>
+
+<script>
+document.getElementById('fileInput').addEventListener('change', handleFileUpload);
+document.getElementById('downloadBtn').addEventListener('click', downloadData);
+
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file && file.name.endsWith('.xlsx')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            displayData(jsonData);
+        };
+        reader.readAsArrayBuffer(file);
+    } else {
+        alert('Please upload a valid .xlsx file.');
+    }
+}
+
+function displayData(data) {
+    const table = document.getElementById('dataTable');
+    table.innerHTML = '';
+    
+    data.forEach((row, rowIndex) => {
+        const tr = document.createElement('tr');
+        row.forEach((cell, cellIndex) => {
+            const td = document.createElement('td');
+            td.contentEditable = true;
+            td.innerText = cell;
+            td.onblur = () => saveToLocalStorage(data);
+            tr.appendChild(td);
+        });
+        table.appendChild(tr);
+    });
+    
+    table.style.display = 'table';
+    document.getElementById('downloadBtn').style.display = 'inline';
+    saveToLocalStorage(data);
+}
+
+function saveToLocalStorage(data) {
+    localStorage.setItem('excelData', JSON.stringify(data));
+}
+
+function downloadData() {
+    const data = JSON.parse(localStorage.getItem('excelData'));
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+
+    function s2ab(s) {
+        const buf = new ArrayBuffer(s.length);
+        const view = new Uint8Array(buf);
+        for (let i = 0; i < s.length; i++) {
+            view[i] = s.charCodeAt(i) & 0xFF;
+        }
+        return buf;
+    }
+    
+    saveAs(new Blob([s2ab(wbout)], { type: "application/octet-stream" }), 'edited_data.xlsx');
+}
+
+// Load data from local storage when the page loads
+window.onload = () => {
+    const storedData = localStorage.getItem('excelData');
+    if (storedData) {
+        displayData(JSON.parse(storedData));
+    }
+};
+
+</script>
+</body>
+</html>
